@@ -1,0 +1,1 @@
+Simple React frontend. Run `npm install` then `npm start`. Adjust API URL in src/config.js

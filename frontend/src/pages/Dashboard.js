@@ -1,0 +1,210 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { API_BASE } from '../config';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+export default function Dashboard() {
+  const [agents, setAgents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    role: '',
+    goal: '',
+    model_name: 'gpt-4-turbo',
+    temperature: 0.7,
+    max_tokens: 1024
+  });
+  const { token } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchAgents();
+  }, [token]);
+
+  const fetchAgents = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_BASE}/agents/list`);
+      setAgents(res.data);
+      setError('');
+    } catch (err) {
+      setError('Failed to load agents: ' + (err.response?.data?.detail || err.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const create = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim()) {
+      setError('Agent name is required');
+      return;
+    }
+    
+    setCreating(true);
+    setError('');
+    
+    try {
+      await axios.post(`${API_BASE}/agents/create`, form);
+      setForm({ name: '', role: '', goal: '', model_name: 'gpt-4-turbo', temperature: 0.7, max_tokens: 1024 });
+      setShowForm(false);
+      fetchAgents();
+    } catch (err) {
+      setError('Create failed: ' + (err.response?.data?.detail || err.message));
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const deleteAgent = async (agentId) => {
+    if (!window.confirm('Are you sure you want to delete this agent? This will also delete all chat history.')) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`${API_BASE}/agents/${agentId}`);
+      fetchAgents();
+    } catch (err) {
+      setError('Delete failed: ' + (err.response?.data?.detail || err.message));
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading agents...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <h1>AI Agents</h1>
+        <button className="btn-primary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ Create Agent'}
+        </button>
+      </div>
+
+      {error && <div className="error-message">{error}</div>}
+
+      {showForm && (
+        <div className="card agent-form-card">
+          <h3>Create New Agent</h3>
+          <form onSubmit={create}>
+            <div className="form-group">
+              <label>Name *</label>
+              <input
+                placeholder="Agent name"
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Role</label>
+              <input
+                placeholder="e.g., Research Assistant, Customer Support"
+                value={form.role}
+                onChange={e => setForm({ ...form, role: e.target.value })}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Goal</label>
+              <textarea
+                placeholder="What should this agent help with?"
+                value={form.goal}
+                onChange={e => setForm({ ...form, goal: e.target.value })}
+                rows="3"
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Model</label>
+                <select
+                  value={form.model_name}
+                  onChange={e => setForm({ ...form, model_name: e.target.value })}
+                >
+                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Temperature: {form.temperature}</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={form.temperature}
+                  onChange={e => setForm({ ...form, temperature: parseFloat(e.target.value) })}
+                />
+                <small>Controls randomness (0 = deterministic, 1 = creative)</small>
+              </div>
+
+              <div className="form-group">
+                <label>Max Tokens</label>
+                <input
+                  type="number"
+                  min="100"
+                  max="4096"
+                  value={form.max_tokens}
+                  onChange={e => setForm({ ...form, max_tokens: parseInt(e.target.value) })}
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="btn-primary" disabled={creating}>
+              {creating ? 'Creating...' : 'Create Agent'}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {agents.length === 0 ? (
+        <div className="empty-state">
+          <p>No agents yet. Create your first agent to get started!</p>
+        </div>
+      ) : (
+        <div className="agents-grid">
+          {agents.map(agent => (
+            <div key={agent.id} className="agent-card">
+              <div className="agent-card-header">
+                <h3>{agent.name}</h3>
+                <button
+                  className="btn-icon"
+                  onClick={() => deleteAgent(agent.id)}
+                  title="Delete agent"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {agent.role && <p className="agent-role">{agent.role}</p>}
+              {agent.goal && <p className="agent-goal">{agent.goal}</p>}
+              
+              <div className="agent-meta">
+                <span className="badge">{agent.model_name}</span>
+                <span className="badge">Temp: {agent.temperature}</span>
+                <span className="badge">Max: {agent.max_tokens}</span>
+              </div>
+              
+              <Link to={`/agent/${agent.id}`} className="btn-secondary">
+                Open Chat →
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

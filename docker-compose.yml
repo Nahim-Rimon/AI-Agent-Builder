@@ -1,0 +1,43 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-agent-builder-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./data/ai_agent_builder.db
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Database persistence
+      - app_data:/app/data
+    restart: unless-stopped
+    networks:
+      - ai-agent-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai-agent-builder-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_BASE=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - ai-agent-network
+
+volumes:
+  # Persistent volume for database
+  app_data:
+    driver: local
+    name: ai-agent-builder-data
+
+networks:
+  ai-agent-network:
+    driver: bridge
+
