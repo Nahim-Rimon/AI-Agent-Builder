@@ -12,7 +12,7 @@ class UserOut(BaseModel):
     username: str
     email: EmailStr
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Token(BaseModel):
     access_token: str
@@ -35,7 +35,7 @@ class AgentOut(BaseModel):
     temperature: float
     max_tokens: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ChatMessageCreate(BaseModel):
     message: str
@@ -46,4 +46,4 @@ class ChatMessageOut(BaseModel):
     message: str
     created_at: datetime
     class Config:
-        orm_mode = True
+        from_attributes = True
