@@ -16,7 +16,9 @@ export default function Dashboard() {
     goal: '',
     model_name: 'gpt-4-turbo',
     temperature: 0.7,
-    max_tokens: 1024
+    max_tokens: 1024,
+    api_key: '',
+    provider: 'openai'
   });
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -44,13 +46,18 @@ export default function Dashboard() {
       setError('Agent name is required');
       return;
     }
+
+    if (!form.api_key.trim()) {
+      setError('An API key is required for the selected model.');
+      return;
+    }
     
     setCreating(true);
     setError('');
     
     try {
       await axios.post(`${API_BASE}/agents/create`, form);
-      setForm({ name: '', role: '', goal: '', model_name: 'gpt-4-turbo', temperature: 0.7, max_tokens: 1024 });
+      setForm({ name: '', role: '', goal: '', model_name: 'gpt-4-turbo', temperature: 0.7, max_tokens: 1024, api_key: '', provider: 'openai' });
       setShowForm(false);
       fetchAgents();
     } catch (err) {
@@ -129,13 +136,41 @@ export default function Dashboard() {
             <div className="form-row">
               <div className="form-group">
                 <label>Model</label>
-                <select
+                <input
+                  type="text"
+                  placeholder="e.g., gpt-4o, gemini-2.0-flash, llama-3-70b"
+                  list="model-options"
                   value={form.model_name}
                   onChange={e => setForm({ ...form, model_name: e.target.value })}
+                />
+                <datalist id="model-options">
+                  <option value="gpt-4-turbo" />
+                  <option value="gpt-4o" />
+                  <option value="gpt-4.1" />
+                  <option value="gpt-3.5-turbo" />
+                  <option value="gpt-3.5-turbo-16k" />
+                  <option value="claude-3.5-sonnet" />
+                  <option value="gemini-2.0-pro" />
+                  <option value="gemini-2.0-flash" />
+                  <option value="gemini-1.5-pro" />
+                  <option value="llama-3-70b" />
+                  <option value="llama-3-8b" />
+                  <option value="fireworks-gpt-4o-mini" />
+                </datalist>
+                <small>Type any model identifier supported by your provider.</small>
+              </div>
+
+              <div className="form-group">
+                <label>Provider</label>
+                <select
+                  value={form.provider}
+                  onChange={e => setForm({ ...form, provider: e.target.value })}
                 >
-                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                  <option value="openai">OpenAI / Azure OpenAI</option>
+                  <option value="gemini">Google Gemini</option>
+                  <option value="fireworks">Fireworks.ai</option>
                 </select>
+                <small>Currently supported providers.</small>
               </div>
 
               <div className="form-group">
@@ -161,6 +196,19 @@ export default function Dashboard() {
                   onChange={e => setForm({ ...form, max_tokens: parseInt(e.target.value) })}
                 />
               </div>
+            </div>
+
+            <div className="form-group">
+              <label>Provider API Key *</label>
+              <input
+                type="password"
+                placeholder="sk-***************************"
+                value={form.api_key}
+                onChange={e => setForm({ ...form, api_key: e.target.value })}
+                autoComplete="off"
+                required
+              />
+              <small>Stored securely and sent only to your provider for this agent.</small>
             </div>
 
             <button type="submit" className="btn-primary" disabled={creating}>
@@ -194,6 +242,7 @@ export default function Dashboard() {
               
               <div className="agent-meta">
                 <span className="badge">{agent.model_name}</span>
+                <span className="badge">Provider: {agent.provider || 'openai'}</span>
                 <span className="badge">Temp: {agent.temperature}</span>
                 <span className="badge">Max: {agent.max_tokens}</span>
               </div>

@@ -26,14 +26,29 @@ def create_agent(config: schemas.AgentCreate, authorization: Optional[str] = Hea
         raise HTTPException(status_code=401, detail='Invalid token')
 
     agent = models.Agent(
-        name=config.name, role=config.role, goal=config.goal,
-        model_name=config.model_name, temperature=config.temperature, max_tokens=config.max_tokens,
+        name=config.name,
+        role=config.role,
+        goal=config.goal,
+        model_name=config.model_name,
+        temperature=config.temperature,
+        max_tokens=config.max_tokens,
+        api_key=(config.api_key or '').strip() or None,
+        provider=(config.provider or 'openai').lower(),
         owner_id=user.id
     )
     db.add(agent); db.commit(); db.refresh(agent)
 
     # create runtime instance
-    runtime_agents[agent.id] = CrewAgent(agent.name, role=agent.role, goal=agent.goal, model=agent.model_name, temperature=agent.temperature, max_tokens=agent.max_tokens)
+    runtime_agents[agent.id] = CrewAgent(
+        agent.name,
+        role=agent.role,
+        goal=agent.goal,
+        model=agent.model_name,
+        temperature=agent.temperature,
+        max_tokens=agent.max_tokens,
+        api_key=agent.api_key,
+        provider=agent.provider
+    )
     return agent
 
 @router.get('/list', response_model=List[schemas.AgentOut])

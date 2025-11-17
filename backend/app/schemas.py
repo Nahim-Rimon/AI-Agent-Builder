@@ -25,6 +25,8 @@ class AgentCreate(BaseModel):
     model_name: Optional[str] = 'gpt-4-turbo'
     temperature: Optional[float] = 0.7
     max_tokens: Optional[int] = 1024
+    api_key: Optional[str] = None
+    provider: Optional[str] = 'openai'
 
 class AgentOut(BaseModel):
     id: int
@@ -34,11 +36,13 @@ class AgentOut(BaseModel):
     model_name: str
     temperature: float
     max_tokens: int
+    provider: Optional[str]
     class Config:
         from_attributes = True
 
 class ChatMessageCreate(BaseModel):
     message: str
+    api_key: Optional[str] = None
 
 class ChatMessageOut(BaseModel):
     id: int

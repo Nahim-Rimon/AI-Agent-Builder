@@ -29,15 +29,34 @@ def send_message(agent_id: int, payload: schemas.ChatMessageCreate, authorizatio
     # ensure runtime instance
     runtime = runtime_agents.get(agent.id)
     if not runtime:
-        runtime = CrewAgent(agent.name, role=agent.role, goal=agent.goal, model=agent.model_name, temperature=agent.temperature, max_tokens=agent.max_tokens)
+        runtime = CrewAgent(
+            agent.name,
+            role=agent.role,
+            goal=agent.goal,
+            model=agent.model_name,
+            temperature=agent.temperature,
+            max_tokens=agent.max_tokens,
+            api_key=agent.api_key,
+            provider=agent.provider
+        )
         runtime_agents[agent.id] = runtime
+    else:
+        runtime.api_key = agent.api_key
+        runtime.provider = agent.provider
+
+    api_key = (payload.api_key or agent.api_key or '').strip()
+    if not api_key:
+        raise HTTPException(status_code=400, detail='No API key configured for this agent. Add one when creating the agent or provide api_key with this request.')
 
     # save user message
     user_msg = models.ChatMessage(agent_id=agent.id, sender='user', message=payload.message)
     db.add(user_msg); db.commit(); db.refresh(user_msg)
 
     # get response from agent
-    response_text = runtime.think(payload.message)
+    try:
+        response_text = runtime.think(payload.message, api_key)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
 
     bot_msg = models.ChatMessage(agent_id=agent.id, sender='agent', message=response_text)
     db.add(bot_msg); db.commit(); db.refresh(bot_msg)
