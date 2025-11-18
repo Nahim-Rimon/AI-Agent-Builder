@@ -12,18 +12,14 @@ async def lifespan(app: FastAPI):
     init_db()
     yield
     # Shutdown (if needed)
+print("API is running on port 8000")
 
 app = FastAPI(title="AI Agent Builder", lifespan=lifespan)
 
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://frontend:80",
-        "http://localhost"
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

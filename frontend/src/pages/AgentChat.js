@@ -3,6 +3,8 @@ import axios from 'axios';
 import { API_BASE } from '../config';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function AgentChat() {
   const { id } = useParams();
@@ -139,7 +141,15 @@ export default function AgentChat() {
                   </span>
                   <span className="message-time">{formatTime(msg.created_at)}</span>
                 </div>
-                <div className="message-text">{msg.message}</div>
+                <div className="message-text">
+                  {msg.sender === 'agent' ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.message}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.message
+                  )}
+                </div>
               </div>
             </div>
           ))

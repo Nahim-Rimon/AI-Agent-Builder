@@ -444,6 +444,203 @@ body {
   word-wrap: break-word;
 }
 
+/* Markdown Styles for Agent Messages */
+
+.message-agent .message-text h1,
+.message-agent .message-text h2,
+.message-agent .message-text h3,
+.message-agent .message-text h4,
+.message-agent .message-text h5,
+.message-agent .message-text h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #1f2937;
+}
+
+.message-agent .message-text h1 {
+  font-size: 1.875rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.message-agent .message-text h2 {
+  font-size: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.375rem;
+}
+
+.message-agent .message-text h3 {
+  font-size: 1.25rem;
+}
+
+.message-agent .message-text h4 {
+  font-size: 1.125rem;
+}
+
+.message-agent .message-text h5 {
+  font-size: 1rem;
+}
+
+.message-agent .message-text h6 {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.message-agent .message-text h1:first-child,
+.message-agent .message-text h2:first-child,
+.message-agent .message-text h3:first-child,
+.message-agent .message-text h4:first-child,
+.message-agent .message-text h5:first-child,
+.message-agent .message-text h6:first-child {
+  margin-top: 0;
+}
+
+/* Paragraphs */
+.message-agent .message-text p {
+  margin-bottom: 1em;
+}
+
+.message-agent .message-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Code blocks */
+.message-agent .message-text pre {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1em 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.message-agent .message-text pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Inline code */
+.message-agent .message-text code {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
+
+.message-agent .message-text pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Lists */
+.message-agent .message-text ul,
+.message-agent .message-text ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.message-agent .message-text li {
+  margin: 0.5em 0;
+}
+
+.message-agent .message-text ul {
+  list-style-type: disc;
+}
+
+.message-agent .message-text ol {
+  list-style-type: decimal;
+}
+
+.message-agent .message-text li > ul,
+.message-agent .message-text li > ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Links */
+.message-agent .message-text a {
+  color: #2563eb;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.message-agent .message-text a:hover {
+  color: #1d4ed8;
+}
+
+/* Blockquotes */
+.message-agent .message-text blockquote {
+  border-left: 4px solid #2563eb;
+  padding-left: 1em;
+  margin: 1em 0;
+  color: #4b5563;
+  font-style: italic;
+}
+
+/* Tables */
+.message-agent .message-text table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+.message-agent .message-text table th,
+.message-agent .message-text table td {
+  border: 1px solid #d1d5db;
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.message-agent .message-text table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+.message-agent .message-text table tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+/* Horizontal rules */
+.message-agent .message-text hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 1.5em 0;
+}
+
+/* Images */
+.message-agent .message-text img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1em 0;
+}
+
+/* Strong and emphasis */
+.message-agent .message-text strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.message-agent .message-text em {
+  font-style: italic;
+}
+
+/* Task lists (from remark-gfm) */
+.message-agent .message-text input[type="checkbox"] {
+  margin-right: 0.5em;
+  cursor: pointer;
+}
+
 .chat-input-form {
   background: white;
   padding: 1rem;
