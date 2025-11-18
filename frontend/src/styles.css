@@ -493,6 +493,22 @@ body {
   }
 }
 
+.streaming-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: #6b7280;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
 /* Markdown Styles for Agent Messages */
 
 .message-agent .message-text h1,
