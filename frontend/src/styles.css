@@ -375,6 +375,8 @@ body {
   padding: 1.5rem;
   overflow-y: auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .empty-chat {
@@ -386,6 +388,8 @@ body {
 .message {
   margin-bottom: 1.5rem;
   display: flex;
+  width: 100%;
+  align-items: flex-start;
 }
 
 .message-user {
@@ -400,6 +404,8 @@ body {
   max-width: 70%;
   padding: 0.75rem 1rem;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 .message-user .message-content {
@@ -442,6 +448,49 @@ body {
 .message-text {
   line-height: 1.5;
   word-wrap: break-word;
+}
+
+.typing-indicator {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.typing-indicator span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #6b7280;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.message-agent .typing-indicator span {
+  background-color: #6b7280;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-8px);
+  }
 }
 
 /* Markdown Styles for Agent Messages */

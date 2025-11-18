@@ -25,13 +25,22 @@ def create_agent(config: schemas.AgentCreate, authorization: Optional[str] = Hea
     if not user:
         raise HTTPException(status_code=401, detail='Invalid token')
 
+    # Validate and ensure max_tokens is valid
+    max_tokens = config.max_tokens if config.max_tokens and config.max_tokens > 0 else 1024
+    if max_tokens > 4096:
+        max_tokens = 4096  # Cap at reasonable maximum
+    if max_tokens < 1:
+        max_tokens = 1024  # Ensure minimum
+
     agent = models.Agent(
         name=config.name,
         role=config.role,
         goal=config.goal,
         model_name=config.model_name,
         temperature=config.temperature,
-        max_tokens=config.max_tokens,
+        max_tokens=max_tokens,
+        top_p=config.top_p,
+        top_k=config.top_k,
         api_key=(config.api_key or '').strip() or None,
         provider=(config.provider or 'openai').lower(),
         owner_id=user.id
@@ -44,8 +53,10 @@ def create_agent(config: schemas.AgentCreate, authorization: Optional[str] = Hea
         role=agent.role,
         goal=agent.goal,
         model=agent.model_name,
-        temperature=agent.temperature,
-        max_tokens=agent.max_tokens,
+        temperature=agent.temperature or 0.7,
+        max_tokens=agent.max_tokens or 1024,
+        top_p=agent.top_p,
+        top_k=agent.top_k,
         api_key=agent.api_key,
         provider=agent.provider
     )

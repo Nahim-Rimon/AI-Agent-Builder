@@ -19,6 +19,8 @@ class Agent(Base):
     model_name = Column(String, default='gpt-4-turbo')
     temperature = Column(Float, default=0.7)
     max_tokens = Column(Integer, default=1024)
+    top_p = Column(Float, default=1.0)
+    top_k = Column(Integer, default=3)
     api_key = Column(String)
     provider = Column(String, default='openai')
     owner_id = Column(Integer, ForeignKey('users.id'))

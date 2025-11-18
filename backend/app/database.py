@@ -28,6 +28,16 @@ def init_db():
         "ALTER TABLE agents ADD COLUMN provider VARCHAR DEFAULT 'openai'",
         "UPDATE agents SET provider='openai' WHERE provider IS NULL"
     )
+    _ensure_agent_column(
+        'top_p',
+        'ALTER TABLE agents ADD COLUMN top_p FLOAT DEFAULT 1.0',
+        "UPDATE agents SET top_p=1.0 WHERE top_p IS NULL"
+    )
+    _ensure_agent_column(
+        'top_k',
+        'ALTER TABLE agents ADD COLUMN top_k INTEGER DEFAULT 50',
+        "UPDATE agents SET top_k=50 WHERE top_k IS NULL"
+    )
 
 def _ensure_agent_column(column_name: str, alter_sql: str, post_sql: Optional[str] = None):
     inspector = inspect(engine)

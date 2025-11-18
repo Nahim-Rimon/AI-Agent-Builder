@@ -17,6 +17,8 @@ export default function Dashboard() {
     model_name: 'gpt-4-turbo',
     temperature: 0.7,
     max_tokens: 1024,
+    top_p: 1.0,
+    top_k: 50,
     api_key: '',
     provider: 'openai'
   });
@@ -57,7 +59,7 @@ export default function Dashboard() {
     
     try {
       await axios.post(`${API_BASE}/agents/create`, form);
-      setForm({ name: '', role: '', goal: '', model_name: 'gpt-4-turbo', temperature: 0.7, max_tokens: 1024, api_key: '', provider: 'openai' });
+      setForm({ name: '', role: '', goal: '', model_name: 'gpt-4-turbo', temperature: 0.7, max_tokens: 1024, top_p: 1.0, top_k: 50, api_key: '', provider: 'openai' });
       setShowForm(false);
       fetchAgents();
     } catch (err) {
@@ -184,6 +186,32 @@ export default function Dashboard() {
                   onChange={e => setForm({ ...form, temperature: parseFloat(e.target.value) })}
                 />
                 <small>Controls randomness (0 = deterministic, 1 = creative)</small>
+              </div>
+
+              <div className="form-group">
+                <label>Top P: {form.top_p}</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={form.top_p}
+                  onChange={e => setForm({ ...form, top_p: parseFloat(e.target.value) })}
+                />
+                <small>Nucleus sampling: consider tokens with top_p probability mass</small>
+              </div>
+
+              <div className="form-group">
+                <label>Top K: {form.top_k}</label>
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value={form.top_k}
+                  onChange={e => setForm({ ...form, top_k: parseInt(e.target.value) })}
+                />
+                <small>Consider only top K most likely tokens</small>
               </div>
 
               <div className="form-group">
