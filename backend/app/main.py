@@ -12,7 +12,11 @@ async def lifespan(app: FastAPI):
     init_db()
     yield
     # Shutdown (if needed)
-print("API is running on port 8000")
+    
+print("===================================================")
+print("Frontend is running on ====> http://0.0.0.0:3000")
+print("Backend is running  on ====> http://0.0.0.0:8000")
+print("===================================================")
 
 app = FastAPI(title="AI Agent Builder", lifespan=lifespan)
 
