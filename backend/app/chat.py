@@ -6,6 +6,7 @@ from .agents import runtime_agents
 from typing import List
 from .core.crew_stub import CrewAgent
 import json
+import time
 
 router = APIRouter(tags=['chat'])
 
@@ -130,6 +131,7 @@ def send_message_stream(agent_id: int, payload: schemas.ChatMessageCreate, autho
             for chunk in runtime.think_stream(payload.message, api_key):
                 full_response += chunk
                 yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+                time.sleep(0.1)  # Add 0.2 second delay between chunks
             
             # Save complete response to database
             bot_msg = models.ChatMessage(agent_id=agent.id, sender='agent', message=full_response)
